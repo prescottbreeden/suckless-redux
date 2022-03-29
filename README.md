@@ -17,26 +17,6 @@ Takes a key and function and applies it to the current state
 ### src/redux/redux.utils.ts
 
 ```tsx
-// action factory
-const buildAction = curry((key: string, type: string) => `${key} 🚀 ${type}`)
-const updateAction = (key: string) => buildAction(key, 'UPDATE')
-const mapAction = (key: string) => buildAction(key, 'MAP')
-
-// action predicates
-const shouldUpdate = (key: string) => flow(read('type'), eq(updateAction(key)))
-const shouldMap = (key: string) => flow(read('type'), eq(mapAction(key)))
-
-// state transformation
-const updateState =
-  <T>(state: T) =>
-  (action: any) =>
-    flow(read('payload'), merge(state))(action)
-
-const mapState =
-  <T>(state: T) =>
-  (action: any) =>
-    flow(read('payload'), applyTo(state))(action)
-
 // one reducer to rule them all and in the darkness bind them
 export const createReducer =
   <T>(key: string, initial: T) =>
