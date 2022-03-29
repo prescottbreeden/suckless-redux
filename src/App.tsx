@@ -1,58 +1,67 @@
-import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
-import './App.css';
+import './App.css'
+import defaultTo from 'lodash/fp/defaultTo'
+import flow from 'lodash/fp/flow'
+import read from 'lodash/fp/get'
+import { Code } from './Code'
+import { OPINION_KEY, COUNTER_KEY } from './redux/_keys'
+import { OpinionWarning } from './OpinionWarning'
+import { update } from './redux/utils'
+import { useDispatch, useSelector } from 'react-redux'
+
+// local utils
+const add = (a: number) => (b: number) => a + b
+const subtract = (a: number) => (b: number) => a - b
+const objectOf = (key: string) => (value: any) => ({ [key]: value })
+const readCount = flow(read([COUNTER_KEY, 'counter']), defaultTo(0))
 
 function App() {
+  const dispatch = useDispatch()
+  const count: number = useSelector(readCount)
+  const opinion: boolean = useSelector(read([OPINION_KEY, 'show']))
+
+  // modify :: (number -> number) -> number -> void
+  const modify = (transform: Function) =>
+    flow(
+      transform(count),
+      objectOf('counter'),
+      update(COUNTER_KEY),
+      dispatch
+    )
+
+  const increment = modify(add)
+  const decreement = modify(subtract)
+
+  // toggleOpinion :: boolean -> void
+  const toggleOpinion =
+    flow(
+      objectOf('show'),
+      update(OPINION_KEY),
+      dispatch
+    )
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
+    <>
+      <div className="App">
+        <h1>Redux</h1>
+        <p>Obligatory Counter: {count}</p>
+        <button onClick={() => decreement(1)}>Decrement</button>
+        <button onClick={() => increment(1)}>Increment</button>
+        <div style={{ margin: '2rem' }} />
+        <button onClick={() => toggleOpinion(!opinion)}>
+          Click if you're interested in my opinion
+        </button>
         <p>
-          Edit <code>src/App.tsx</code> and save to reload.
+          This Redux is built with two functions: <Code>createReducer</Code>{' '}
+          and <Code>update</Code>.
         </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
-    </div>
-  );
+        <p>
+          Toggle Redux DevTools with <Code>ctl-h</Code> / Reposition with{' '}
+          <Code>ctl-g</Code>
+        </p>
+        <OpinionWarning />
+      </div>
+    </>
+  )
 }
 
-export default App;
+export default App

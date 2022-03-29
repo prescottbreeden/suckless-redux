@@ -1,21 +1,3 @@
-# KISS Redux Pattern
-
-## Useful abstractions have strong limitations
-A Map is a useful abstraction because it is significantly more limiting than a
-For loop. Strong limitations lead to code that is easier to digest and debug and
-code that is more unified and consistent accross different teams.
-
-## Problems with traditional Redux patterns
-- Lack strong limitations
-- Difficult to reason about
-- Difficult for new members to learn
-- Difficult to test
-- Leaky
-- Produce massive bloat
-
-## Take only what you need to survive...
-`src/redux/utils.ts`
-```tsx
 import cond from 'lodash/fp/cond'
 import curry from 'lodash/fp/curry'
 import eq from 'lodash/fp/eq'
@@ -40,4 +22,3 @@ export const update = curry((key: string, payload: any) => ({
   type: buildAction(key),
   payload,
 }))
-```
