@@ -3,7 +3,7 @@ import flow from 'lodash/fp/flow'
 import { ReduxDevTools } from './ReduxDevTools'
 import { combineReducers, applyMiddleware, createStore } from 'redux'
 import { counterMiddleware } from './middleware/counter.middleware'
-import { createReducer } from './utils'
+import { createReducer } from './redux.utils'
 
 const rootReducer = combineReducers({
   [Keys.COUNTER_KEY]: createReducer(Keys.COUNTER_KEY, { counter: 0 }),

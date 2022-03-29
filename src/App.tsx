@@ -5,7 +5,7 @@ import read from 'lodash/fp/get'
 import { Code } from './Code'
 import { OPINION_KEY, COUNTER_KEY } from './redux/_keys'
 import { OpinionWarning } from './OpinionWarning'
-import { Action } from './redux/utils'
+import { Action } from './redux/redux.utils'
 import { useDispatch, useSelector } from 'react-redux'
 
 // local utils
@@ -30,6 +30,10 @@ function App() {
   const increment = modify(add)
   const decreement = modify(subtract)
 
+  // Synonymous with...
+  const inc = () => dispatch(Action.of(COUNTER_KEY)({ counter: count + 1 }))
+  const dec = () => dispatch(Action.of(COUNTER_KEY)({ counter: count - 1 }))
+
   // update OPINION_KEY without reading
   const mapOpinion =
     flow(
@@ -37,6 +41,9 @@ function App() {
       dispatch
     )
   const toggleShow = ({ show }: { show: boolean }) => ({ show: !show })
+
+  // or...
+  const dispatchToggle = () => dispatch(Action.of(OPINION_KEY)(toggleShow))
 
   return (
     <>

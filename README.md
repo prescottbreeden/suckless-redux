@@ -14,7 +14,7 @@ Takes key and new state replaces existing state with a new state
 ### `Action.map :: Key -> (T -> T) -> T`
 Takes a key and function and applies it to the current state
 
-### src/redux/utils.ts
+### src/redux/redux.utils.ts
 
 ```tsx
 // action factory
@@ -26,14 +26,17 @@ const mapAction = (key: string) => buildAction(key, 'MAP')
 const shouldUpdate = (key: string) => flow(read('type'), eq(updateAction(key)))
 const shouldMap = (key: string) => flow(read('type'), eq(mapAction(key)))
 
+// state transformation
+const updateState = <T>(state: T) => flow(read('payload'), merge(state))
+const mapState = <T>(state: T) => flow(read('payload'), (fn: (state: T) => T) => fn(state))
+
 // one reducer to rule them all and in the darkness bind them
 export const createReducer =
-  <T,>(key: string, initial: T) =>
-  (currentState: T, action: any) => {
+  <T>(key: string, initial: T) => (currentState: T, action: any) => {
     const state = currentState ?? initial
     return cond([
-      [shouldUpdate(key), flow(read('payload'), merge(state))],
-      [shouldMap(key), flow(read('payload'), (fn) => fn(state))],
+      [shouldUpdate(key), updateState(state)],
+      [shouldMap(key), mapState(state)],
       [otherwise, () => state],
     ])(action)
   }
