@@ -27,12 +27,20 @@ const shouldUpdate = (key: string) => flow(read('type'), eq(updateAction(key)))
 const shouldMap = (key: string) => flow(read('type'), eq(mapAction(key)))
 
 // state transformation
-const updateState = <T>(state: T) => flow(read('payload'), merge(state))
-const mapState = <T>(state: T) => flow(read('payload'), (fn: (state: T) => T) => fn(state))
+const updateState =
+  <T>(state: T) =>
+  (action: any) =>
+    flow(read('payload'), merge(state))(action)
+
+const mapState =
+  <T>(state: T) =>
+  (action: any) =>
+    flow(read('payload'), applyTo(state))(action)
 
 // one reducer to rule them all and in the darkness bind them
 export const createReducer =
-  <T>(key: string, initial: T) => (currentState: T, action: any) => {
+  <T>(key: string, initial: T) =>
+  (currentState: T, action: any) => {
     const state = currentState ?? initial
     return cond([
       [shouldUpdate(key), updateState(state)],
@@ -50,6 +58,6 @@ export const Action = {
   map: curry((key: string, payload: Function) => ({
     type: mapAction(key),
     payload,
-  }))
+  })),
 }
 ```
