@@ -6,7 +6,7 @@ import { counterMiddleware } from './middleware/counter.middleware'
 import { createReducer } from './utils'
 
 const rootReducer = combineReducers({
-  [Keys.COUNTER_KEY]: createReducer(Keys.COUNTER_KEY, {}),
+  [Keys.COUNTER_KEY]: createReducer(Keys.COUNTER_KEY, { counter: 0 }),
   [Keys.OPINION_KEY]: createReducer(Keys.OPINION_KEY, { show: false }),
 })
 
